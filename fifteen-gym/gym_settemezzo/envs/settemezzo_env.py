@@ -109,7 +109,7 @@ class SettemezzoEnv(gym.Env):
         return self._get_obs(), reward, done, {}
 
     def _get_obs(self):
-        return (sum_hand(self.player), self.dealer[0], usable_ace(self.player))
+        return (sum_hand(self.player), self.dealer[0])
 
     def reset(self):
         self.dealer = draw_hand(self.np_random)
