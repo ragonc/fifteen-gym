@@ -41,7 +41,7 @@ def is_natural(hand):  # Is this hand a natural blackjack?
     return sorted(hand) == [1, 14]
 
 
-class BlackjackEnv(gym.Env):
+class SettemezzoEnv(gym.Env):
     """
         Simple 7mezzo environment
         Blackjack is a card game where the goal is to obtain cards that sum to as
