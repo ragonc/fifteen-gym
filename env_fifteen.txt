@@ -13,4 +13,6 @@ pip install ptan
 
 needed for q-learn
 conda install matplotlib
+conda install scipy
+conda install jupyter
 
