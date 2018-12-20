@@ -1,0 +1,16 @@
+conda env fifteen
+
+conda create -n fifteen python=3.6
+
+Packages for pg
+conda install pytorch torchvision -c pytorch
+pip install tensorboard-pytorch
+pip install gym
+pip install gym[atari]
+pip install opencv-python
+pip install ptan
+
+
+needed for q-learn
+conda install matplotlib
+
