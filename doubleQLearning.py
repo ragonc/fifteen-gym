@@ -8,11 +8,11 @@ import gym_settemezzo
 def maxAction(Q1, Q2, state):
     #values = np.array([Q1[state, a] + Q2[state, a] for a in range(2)])
     #print(values)
-    print(state)
-    print(Q1[0,0,0])
-    hit = Q1[state[0], state[1], 1]
-    print(hit)
-    stick = Q1[state[0], state[1], 0]
+    hit = Q1[state, 1] + Q2[state, 1]   
+    stick = Q1[state, 0] + Q2[state, 0]
+    print('state number: ' + str(state))
+    print('hit: ' + str(hit))
+    print('stick: ' + str(stick))
     # action = np.argmax(values)
     return int(hit > stick)
 
@@ -28,11 +28,13 @@ def getState(observation):
     playerSumSpace = list(range(1, 30))  # up to 7 + 7 (28) however, will still need to learn to stay on 15/7.5 :)
     dealerShowSpace = [1, 2, 4, 6, 8, 10, 12, 14]  # for us this will be 0 (1) to 14
     player, dealer = observation
-    print(observation)
-    player = playerSumSpace.index(player)
-    dealer = dealerShowSpace.index(dealer)
+    state = (playerSumSpace.index(player) * 8) + dealerShowSpace.index(dealer)
+    print('obs: ' + str(player) + ' ' + str(dealer))
+    print('calculated state: ' + str(state))
+    # player = playerSumSpace.index(player)
+    # dealer = dealerShowSpace.index(dealer)
 
-    return (player, dealer)  # NOTE: instead, should return index of player * dealer.size + dealer
+    return state  # NOTE: should return index of player * dealer.size + dealer
 
 
 def plotRunningAverage(totalrewards):
@@ -48,14 +50,16 @@ def plotRunningAverage(totalrewards):
 if __name__ == '__main__':
     env = gym.make('Settemezzo-v0')
     # model hyperparameters
-    ALPHA = 0.1
-    GAMMA = 0.9
-    EPS = 1.0
+    ALPHA = 0.1  # learning rate
+    GAMMA = 0.9  # discount factor
+    EPS = 1.0  # exploration rate
 
     # player possibilities: 14; dealer poss: 8
     #states = np.zeros((14, 8))
-    Q1 = np.zeros((29, 8, 2))
-    Q2 = np.zeros((29, 8, 2))
+    # Q1 = np.zeros((29, 8, 2))
+    # Q2 = np.zeros((29, 8, 2))
+    Q1 = np.zeros((30 * 8, 2))
+    Q2 = np.zeros((30 * 8, 2))
 
     # Q1, Q2 = {}, {}
     # for s in range(states.size):
@@ -63,7 +67,7 @@ if __name__ == '__main__':
     #         Q1[s, a] = 0
     #         Q2[s, a] = 0
 
-    numGames = 25000
+    numGames = 150000
     totalRewards = np.zeros(numGames)
     for i in range(numGames):
         if i % 5000 == 0:
@@ -79,7 +83,8 @@ if __name__ == '__main__':
                 a = maxAction(Q1, Q2, s)
                 methodCalled = True
             else:
-                a = env.action_space.sample()
+                # a = env.action_space.sample()  # NOTE: this should be just 1 or 0, but it's not sampling correctly (sometimes)
+                a = np.random.randint(0, 1)
                 methodCalled = False
             print(a)
             if a > 1:
@@ -87,6 +92,7 @@ if __name__ == '__main__':
                 a = 1
             observation_, reward, done, info = env.step(a)
             epRewards += reward
+            # print('observation: ' + str(observation_[0]) + ' ' + str(observation_[1]))
             s_ = getState(observation_)
             rand = np.random.random()
             if rand <= 0.5:
@@ -97,15 +103,16 @@ if __name__ == '__main__':
                 Q2[s, a] = Q2[s, a] + ALPHA * (reward + GAMMA * Q1[s_, a_] - Q2[s, a])
             observation = observation_
         EPS -= 2 / (numGames) if EPS > 0 else 0
+        # print(EPS)
         # print(epRewards)
         totalRewards[i] = epRewards
 
     # plt.plot(totalRewards, 'b--')
-    # plt.show()
+    plt.show()
     # print(states)
-    print('alpha is: ' + str(ALPHA))
-    print('gamma is: ' + str(GAMMA))
-    print('eps is: ' + str(EPS))
+    # print('alpha is: ' + str(ALPHA))
+    # print('gamma is: ' + str(GAMMA))
+    # print('eps is: ' + str(EPS))
     # print(Q1)
     # print(Q2)
     plotRunningAverage(totalRewards)
