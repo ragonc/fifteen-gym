@@ -16,7 +16,8 @@ def draw_card(np_random):
 
 
 def draw_hand(np_random):
-    return [draw_card(np_random), draw_card(np_random)]
+    # print('drawing hand')
+    return [draw_card(np_random)]
 
 
 # def usable_ace(hand):  # Does this hand have a usable ace?
