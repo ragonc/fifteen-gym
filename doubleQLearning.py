@@ -53,6 +53,7 @@ if __name__ == '__main__':
     ALPHA = 0.1  # learning rate
     GAMMA = 0.9  # discount factor
     EPS = 1.0  # exploration rate
+    epsRF = 0.999  # per-game exploration reduction factor
 
     # player possibilities: 14; dealer poss: 8
     #states = np.zeros((14, 8))
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     #         Q1[s, a] = 0
     #         Q2[s, a] = 0
 
-    numGames = 150000
+    numGames = 30000
     totalRewards = np.zeros(numGames)
     for i in range(numGames):
         if i % 5000 == 0:
@@ -84,9 +85,9 @@ if __name__ == '__main__':
                 methodCalled = True
             else:
                 # a = env.action_space.sample()  # NOTE: this should be just 1 or 0, but it's not sampling correctly (sometimes)
-                a = np.random.randint(0, 1)
+                a = np.random.randint(0, 2)
                 methodCalled = False
-            print(a)
+            # print(a)
             if a > 1:
                 print('erroneous action choice: ' + str(methodCalled))
                 a = 1
@@ -102,7 +103,9 @@ if __name__ == '__main__':
                 a_ = maxAction(Q2, Q2, s)
                 Q2[s, a] = Q2[s, a] + ALPHA * (reward + GAMMA * Q1[s_, a_] - Q2[s, a])
             observation = observation_
-        EPS -= 2 / (numGames) if EPS > 0 else 0
+        # EPS -= 2 / (numGames) if EPS > 0 else 0
+        if EPS > 0.01:
+        	EPS = EPS * epsRF
         # print(EPS)
         # print(epRewards)
         totalRewards[i] = epRewards
@@ -115,4 +118,5 @@ if __name__ == '__main__':
     # print('eps is: ' + str(EPS))
     # print(Q1)
     # print(Q2)
+    print(np.mean(totalRewards))
     plotRunningAverage(totalRewards)
