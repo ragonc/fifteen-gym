@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import gym
+import gym_settemezzo
 import ptan
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -40,7 +41,7 @@ def calc_qvals(rewards):
 
 if __name__ == "__main__":
     env = gym.make("Settemezzo-v0")
-    writer = SummaryWriter(comment="-cartpole-reinforce")
+    writer = SummaryWriter(comment="-settemezzo-reinforce")
 
     net = PGN(env.observation_space.shape[0], env.action_space.n)
     print(net)

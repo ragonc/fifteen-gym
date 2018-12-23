@@ -1,4 +1,5 @@
 import gym
+import gym_settemezzo
 import numpy as np
 import matplotlib.pyplot as plt
 

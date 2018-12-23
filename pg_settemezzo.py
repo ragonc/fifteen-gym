@@ -1,6 +1,7 @@
 # Forked from https://github.com/PacktPublishing/Deep-Reinforcement-Learning-Hands-On
 
 import gym
+import gym_settemezzo
 import numpy as np
 import argparse
 import collections
