@@ -8,9 +8,8 @@ if __name__ == '__main__':
     EPS = 0.05
     GAMMA = 1.0
 
-    agentSumSpace = [i for i in range(2, 8)]
-    dealerShowCardSpace = [i+1 for i in range(8)]
-    agentAceSpace = [False, True]
+    agentSumSpace = [i for i in range(1, 30)]
+    dealerShowCardSpace = [i+1 for i in range(15)]
     actionSpace = [0, 1] # stick or hit
     stateSpace = []
     
