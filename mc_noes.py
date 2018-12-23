@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     env = gym.make('Settemezzo-v0')
-    EPS = 0.05
-    GAMMA = 1.0
+    EPS = 0.1
+    GAMMA = 0.9
 
     Q = {}
     agentSumSpace = [i for i in range(1, 30)]
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     wins = 0
     losses = 0
     draws = 0
-    print('getting ready to test policy')   
+    print('Getting ready to test policy')   
     for i in range(numEpisodes):
         observation = env.reset()
         done = False
@@ -94,6 +94,7 @@ if __name__ == '__main__':
         totalReward += reward
         rewards[i] = totalReward
 
+
         if reward >= 1:
             wins += 1
         elif reward == 0:
@@ -101,9 +102,13 @@ if __name__ == '__main__':
         elif reward == -1:
             losses += 1
     
-    wins /= numEpisodes
+    
+   	wins /= numEpisodes
     losses /= numEpisodes
     draws /= numEpisodes
     print('win rate', wins, 'loss rate', losses, 'draw rate', draws)
+    
     plt.plot(rewards)
     plt.show()
+    
+    #print(Q)
