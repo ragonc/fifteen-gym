@@ -59,10 +59,6 @@ if __name__ == "__main__":
                 episode_rewards_sum = sum(PG.episode_rewards)
                 rewards.append(episode_rewards_sum)
 
-                # print("==========================================")
-                # print("Episode: ", episode)
-                # print("Reward: ", episode_rewards_sum)
-
                 # 4. Train neural network
                 discounted_episode_rewards = PG.learn()
 
