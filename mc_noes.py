@@ -10,8 +10,8 @@ if __name__ == '__main__':
 
     Q = {}
     agentSumSpace = [i for i in range(1, 30)]
-    dealerShowCardSpace = [i+1 for i in range(15)]
-    actionSpace = [0, 1] # stick or hit
+    dealerShowCardSpace = [i + 1 for i in range(15)]
+    actionSpace = [0, 1]  # stick or hit
 
     stateSpace = []
     returns = {}
@@ -23,7 +23,7 @@ if __name__ == '__main__':
                 returns[((total, card), action)] = 0
                 pairsVisited[((total, card), action)] = 0
             stateSpace.append((total, card))
-    
+
     policy = {}
     for state in stateSpace:
         policy[state] = np.random.choice(actionSpace)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
             observation_, reward, done, info = env.step(action)
             memory.append((observation[0], observation[1], action, reward))
             observation = observation_
-        memory.append((observation[0], observation[1], action, reward))    
+        memory.append((observation[0], observation[1], action, reward))
 
         G = 0
         last = True
@@ -50,7 +50,7 @@ if __name__ == '__main__':
                 last = False
             else:
                 statesActionsReturns.append((playerSum, dealerCard, action, G))
-            G = GAMMA*G + reward
+            G = GAMMA * G + reward
 
         statesActionsReturns.reverse()
         statesActionsVisited = []
@@ -61,13 +61,13 @@ if __name__ == '__main__':
                 pairsVisited[sa] += 1
                 # incremental implementation
                 # new estimate = 1 / N * [sample - old estimate]
-                returns[(sa)] += (1 / pairsVisited[(sa)])*(G-returns[(sa)])
+                returns[(sa)] += (1 / pairsVisited[(sa)]) * (G - returns[(sa)])
                 Q[sa] = returns[sa]
                 rand = np.random.random()
                 if rand < 1 - EPS:
                     state = (playerSum, dealerCard)
-                    values = np.array([Q[(state, a)] for a in actionSpace ])
-                    best = np.random.choice(np.where(values==values.max())[0])
+                    values = np.array([Q[(state, a)] for a in actionSpace])
+                    best = np.random.choice(np.where(values == values.max())[0])
                     policy[state] = actionSpace[best]
                 else:
                     policy[state] = np.random.choice(actionSpace)
@@ -83,17 +83,16 @@ if __name__ == '__main__':
     wins = 0
     losses = 0
     draws = 0
-    print('Getting ready to test policy')   
+    print('Getting ready to test policy')
     for i in range(numEpisodes):
         observation = env.reset()
         done = False
         while not done:
             action = policy[observation]
-            observation_, reward, done, info = env.step(action)            
+            observation_, reward, done, info = env.step(action)
             observation = observation_
         totalReward += reward
         rewards[i] = totalReward
-
 
         if reward >= 1:
             wins += 1
@@ -101,14 +100,14 @@ if __name__ == '__main__':
             draws += 1
         elif reward == -1:
             losses += 1
-    
-    
-   	wins /= numEpisodes
+
+    wins /= numEpisodes
     losses /= numEpisodes
     draws /= numEpisodes
     print('win rate', wins, 'loss rate', losses, 'draw rate', draws)
-    
+    # print('reward average', np.mean(rewards))
+
     plt.plot(rewards)
     plt.show()
-    
-    #print(Q)
+
+    # print(Q)

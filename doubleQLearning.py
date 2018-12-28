@@ -56,7 +56,7 @@ if __name__ == '__main__':
     epsRF = 0.999  # per-game exploration reduction factor
 
     # player possibilities: 14; dealer poss: 8
-    #states = np.zeros((14, 8))
+    # states = np.zeros((14, 8))
     # Q1 = np.zeros((29, 8, 2))
     # Q2 = np.zeros((29, 8, 2))
     Q1 = np.zeros((30 * 8, 2))
@@ -105,7 +105,7 @@ if __name__ == '__main__':
             observation = observation_
         # EPS -= 2 / (numGames) if EPS > 0 else 0
         if EPS > 0.01:
-        	EPS = EPS * epsRF
+            EPS = EPS * epsRF
         # print(EPS)
         # print(epRewards)
         totalRewards[i] = epRewards
