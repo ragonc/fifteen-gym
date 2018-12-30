@@ -62,7 +62,7 @@ if __name__ == '__main__':
         statesActionsVisited = []
 
         for playerSum, dealerCard, action, G in statesActionsReturns:
-            sa = ((playerSum, dealerCard), action)
+            sa = ((playerSum, dealerCard), action) #state and actions tuple
             if sa not in statesActionsVisited:
                 pairsVisited[sa] += 1
                 # incremental implementation
@@ -70,19 +70,21 @@ if __name__ == '__main__':
                 returns[(sa)] += (1 / pairsVisited[(sa)]) * (G - returns[(sa)])
                 Q[sa] = returns[sa]
                 rand = np.random.random()
-                if rand < 1 - EPS:
+                if rand < 1 - EPS: #use epsilon greedy to find the best action
                     state = (playerSum, dealerCard)
                     values = np.array([Q[(state, a)] for a in actionSpace])
-                    best = np.random.choice(np.where(values == values.max())[0])
+                    best = np.random.choice(np.where(values == values.max())[0]) #instead of using argmax, a random tiebreaker is used
                     policy[state] = actionSpace[best]
                 else:
                     policy[state] = np.random.choice(actionSpace)
                 statesActionsVisited.append(sa)
+        #we don't to get negative 
         if EPS - 1e-7 > 0:
             EPS -= 1e-7
         else:
             EPS = 0
 
+#testing phase to see how well is it doing
     numEpisodes = 1000
     rewards = np.zeros(numEpisodes)
     totalReward = 0
