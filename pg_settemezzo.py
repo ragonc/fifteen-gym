@@ -67,7 +67,7 @@ if __name__ == "__main__":
     env = gym.make("Settemezzo-v0")
     writer = SummaryWriter(comment="-settemezzo-pg")
 
-    net = PGN(env.observation_space.shape[0], env.action_space.n).to(device)
+    net = PGN(29, 2).to(device)
     print(net)
 
     # The agent inputs the state into the neural network, and gets back logits.

@@ -35,7 +35,7 @@ class PolicyGradient:
 
         # $ tensorboard --logdir=logs
         # http://0.0.0.0:6006/
-        tf.summary.FileWriter("logs/", self.sess.graph)
+        #tf.summary.FileWriter("logs/", self.sess.graph)
 
         self.sess.run(tf.global_variables_initializer())
 
@@ -46,6 +46,7 @@ class PolicyGradient:
         if load_path is not None:
             self.load_path = load_path
             self.saver.restore(self.sess, self.load_path)
+            print("Model loaded: %s" % load_path)
 
     def store_transition(self, obs, act, rew):
         # Store play memory for training
@@ -91,7 +92,7 @@ class PolicyGradient:
         # Save checkpoint
         if self.save_path is not None:
             save_path = self.saver.save(self.sess, self.save_path)
-            print("Model saved in file: %s" % save_path)
+            print("Model saved: %s" % save_path)
 
         return discounted_episode_rewards
 
@@ -99,7 +100,7 @@ class PolicyGradient:
 
         discounted_episode_rewards = np.zeros_like(self.episode_rewards, dtype=float)
         cumulative = 0.0
-        # JMS: starting with the last state, reward moving backwards ("inherited" * decay + personal reward)
+        # starting with the last state, reward moving backwards ("inherited" * decay + personal reward)
         for t in reversed(range(len(self.episode_rewards))):
             cumulative = cumulative * self.gamma + self.episode_rewards[t]
             discounted_episode_rewards[t] = cumulative
@@ -115,8 +116,8 @@ class PolicyGradient:
             self.discounted_episode_rewards = tf.placeholder(tf.float32, [None, ], name="actions_value")
 
         # Initialize parameters
-        units_layer_1 = 3
-        units_layer_2 = 3
+        units_layer_1 = 10
+        units_layer_2 = 10
         units_output_layer = self.n_y
         with tf.name_scope('parameters'):
             W1 = tf.get_variable("W1", [units_layer_1, self.n_x], initializer = tf.contrib.layers.xavier_initializer(seed=1))
@@ -130,7 +131,7 @@ class PolicyGradient:
         with tf.name_scope('layer_1'):
             Z1 = tf.add(tf.matmul(W1,self.X), b1)
             A1 = tf.nn.relu(Z1)
-        # JMS: removed layer 2 to see if this is the issue of non-convergence ***********************************
+        # for 2-layer modification, comment out the below and switch A2 -> A1 in layer_3
         with tf.name_scope('layer_2'):
             Z2 = tf.add(tf.matmul(W2, A1), b2)
             A2 = tf.nn.relu(Z2)
