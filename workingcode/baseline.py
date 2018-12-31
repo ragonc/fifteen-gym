@@ -12,9 +12,6 @@ if __name__ == '__main__':
     
     start_time = time.time()  # for tracking run time of method
 
-    # model hyperparameters
-    EPS = 0.05
-    GAMMA = 0.3
 
 #Setting up the Q-list that we are going to be working with
     Q = {}
@@ -69,7 +66,7 @@ if __name__ == '__main__':
                 last = False
             else:
                 statesActionsReturns.append((playerSum, dealerCard, action, G)) #return after the first visit
-            G = GAMMA * G + reward
+            G = reward
 
         statesActionsReturns.reverse() #reverse to put in chronological order
         statesActionsVisited = []
@@ -95,11 +92,11 @@ if __name__ == '__main__':
         print(np.mean(sub))
         segments.append(np.mean(sub))
     idx = int(numEpisodes / 10)
-    print("'Trained' (avg of last tenth) reward:", np.mean(totalRewards[-idx:]))
+    print("'Non trained' (avg of last tenth) reward:", np.mean(totalRewards[-idx:]))
     print("Average reward:", np.mean(totalRewards))
     unique, counts = np.unique(np.array(totalRewards), return_counts=True) 
     print(dict(zip(unique, counts)))
     print("Total runtime: ", round(time.time() - start_time, 2), " seconds")
-    np.save("dq_last_rewards", totalRewards)
+    np.save("baseline_rewards", totalRewards)
     plt.plot(segments)
     plt.show()
