@@ -2,11 +2,15 @@ import gym
 import gym_settemezzo
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+from datetime import timedelta
+
+start_time = time.monotonic()
 
 if __name__ == '__main__':
     env = gym.make('Settemezzo-v0')
-    EPS = 0.05
-    GAMMA = 1.0
+    EPS = 0.1
+    GAMMA = 0.9
 
     agentSumSpace = [i for i in range(1, 30)]
     dealerShowCardSpace = [i + 1 for i in range(15)]
@@ -101,6 +105,12 @@ if __name__ == '__main__':
     wins /= numEvalEpisodes
     losses /= numEvalEpisodes
     draws /= numEvalEpisodes
+    
+    end_time = time.monotonic()
+
     print('win rate', wins, 'loss rate', losses, 'draw rate', draws)
+    print('reward average', np.mean(rewards))
+    print(timedelta(seconds=end_time - start_time))
+    
     plt.plot(rewards)
     plt.show()

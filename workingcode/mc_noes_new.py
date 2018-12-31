@@ -13,7 +13,7 @@ if __name__ == '__main__':
     start_time = time.time()  # for tracking run time of method
 
     # model hyperparameters
-    EPS = 0.05
+    EPS = 0.09
     GAMMA = 0.3
 
 #Setting up the Q-list that we are going to be working with
@@ -40,14 +40,14 @@ if __name__ == '__main__':
     for state in stateSpace:
         policy[state] = np.random.choice(actionSpace) #start with stick or hit with 50% probability (random policy)
 
-    numEpisodes = 1000000
+    numEpisodes = 5000000
     totalRewards = np.zeros(numEpisodes)
 
     for i in range(numEpisodes):
         statesActionsReturns = [] #empty list to keep track of state actions
         memory = [] #memory to append the episodes
 
-        if i % 100000 == 0: #to keep track of the training (not mandatory, but useful)
+        if i % 1000000 == 0: #to keep track of the training (not mandatory, but useful)
             print('Starting Episode', i)
         observation = env.reset()
         epRewards = 0
