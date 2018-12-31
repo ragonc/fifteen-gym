@@ -40,7 +40,7 @@ if __name__ == '__main__':
     for state in stateSpace:
         policy[state] = np.random.choice(actionSpace) #start with stick or hit with 50% probability (random policy)
 
-    numEpisodes = 5000000
+    numEpisodes = 10000000
     totalRewards = np.zeros(numEpisodes)
 
     for i in range(numEpisodes):

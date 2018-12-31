@@ -45,9 +45,7 @@ if __name__ == '__main__':
             else:
                 behaviorPolicy[state] = actionSpace
         observation = env.reset()
-        epRewards = 0
         done = False
-        
         while not done:
             action = np.random.choice(behaviorPolicy[observation])
             observation_, reward, done, info = env.step(action)
@@ -80,23 +78,39 @@ if __name__ == '__main__':
             EPS -= 1e-7
         else:
             EPS = 0
-            
-        totalRewards[i] = epRewards
+    numEvalEpisodes = 1000
+    rewards = np.zeros(numEvalEpisodes)
+    totalReward = 0
+    wins = 0
+    losses = 0
+    draws = 0
+    print('getting ready to test target policy')
+    for i in range(numEvalEpisodes):
+        observation = env.reset()
+        done = False
+        while not done:
+            action = targetPolicy[observation]
+            observation_, reward, done, info = env.step(action)
+            observation = observation_
+        totalReward += reward
+        rewards[i] = totalReward
 
-            
-# Summary printouts of performance
-    segments = []
-    split = np.split(np.array(totalRewards), 100)
-    print("Progression of segmented average scores: ")
-    for sub in split:
-        print(np.mean(sub))
-        segments.append(np.mean(sub))
-    idx = int(numEpisodes / 10)
-    print("'Trained' (avg of last tenth) reward:", np.mean(totalRewards[-idx:]))
-    print("Average reward:", np.mean(totalRewards))
-    unique, counts = np.unique(np.array(totalRewards), return_counts=True) 
-    print(dict(zip(unique, counts)))
-    print("Total runtime: ", round(time.time() - start_time, 2), " seconds")
-    np.save("dq_last_rewards", totalRewards)
-    plt.plot(segments)
+        if reward >= 1:
+            wins += 1
+        elif reward == 0:
+            draws += 1
+        elif reward == -1:
+            losses += 1
+
+    wins /= numEvalEpisodes
+    losses /= numEvalEpisodes
+    draws /= numEvalEpisodes
+    
+    end_time = time.monotonic()
+
+    print('win rate', wins, 'loss rate', losses, 'draw rate', draws)
+    print('reward average', np.mean(rewards))
+    print(timedelta(seconds=end_time - start_time))
+    
+    plt.plot(rewards)
     plt.show()
