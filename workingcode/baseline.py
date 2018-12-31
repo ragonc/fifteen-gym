@@ -12,7 +12,6 @@ if __name__ == '__main__':
     
     start_time = time.time()  # for tracking run time of method
 
-
 #Setting up the Q-list that we are going to be working with
     Q = {}
     agentSumSpace = [i for i in range(1, 30)]

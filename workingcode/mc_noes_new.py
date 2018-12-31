@@ -112,6 +112,6 @@ if __name__ == '__main__':
     unique, counts = np.unique(np.array(totalRewards), return_counts=True) 
     print(dict(zip(unique, counts)))
     print("Total runtime: ", round(time.time() - start_time, 2), " seconds")
-    np.save("dq_last_rewards", totalRewards)
+    np.save("noes_rewards", totalRewards)
     plt.plot(segments)
     plt.show()
