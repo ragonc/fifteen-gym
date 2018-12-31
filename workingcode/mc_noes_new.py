@@ -9,6 +9,10 @@ start_time = time.monotonic()
 
 if __name__ == '__main__':
     env = gym.make('Settemezzo-v0')
+    
+    start_time = time.time()  # for tracking run time of method
+
+    # model hyperparameters
     EPS = 0.05
     GAMMA = 0.3
 
@@ -36,19 +40,24 @@ if __name__ == '__main__':
     for state in stateSpace:
         policy[state] = np.random.choice(actionSpace) #start with stick or hit with 50% probability (random policy)
 
-    numEpisodes = 5000000
+    numEpisodes = 1000000
+    totalRewards = np.zeros(numEpisodes)
+
     for i in range(numEpisodes):
         statesActionsReturns = [] #empty list to keep track of state actions
         memory = [] #memory to append the episodes
+
         if i % 100000 == 0: #to keep track of the training (not mandatory, but useful)
             print('Starting Episode', i)
         observation = env.reset()
+        epRewards = 0
         done = False #reset till you are not done 
 
 #To actually play the game you need the following cycle
         while not done:
             action = policy[observation] #select an action, given the observation of the environment
             observation_, reward, done, info = env.step(action)
+            epRewards += reward
             memory.append((observation[0], observation[1], action, reward))
             observation = observation_ #reset to the new state
         memory.append((observation[0], observation[1], action, reward)) #when the episode is over append the final state
@@ -88,44 +97,21 @@ if __name__ == '__main__':
         else:
             EPS = 0
 
-#testing phase to see how well is it doing
-    numEpisodes = 100
-    rewards = np.zeros(numEpisodes)
-    totalReward = 0
-    wins = 0
-    losses = 0
-    draws = 0
-    print('Getting ready to test policy')
-    for i in range(numEpisodes):
-        observation = env.reset()
-        done = False
-        while not done:
-            action = policy[observation]
-            observation_, reward, done, info = env.step(action)
-            observation = observation_
-        totalReward += reward
-        rewards[i] = totalReward
+        totalRewards[i] = epRewards
 
-        if reward >= 1:
-            wins += 1
-        elif reward == 0:
-            draws += 1
-        elif reward == -1:
-            losses += 1
-
-    wins /= numEpisodes
-    losses /= numEpisodes
-    draws /= numEpisodes
-    checkrewards = rewards/numEpisodes
-    
-    end_time = time.monotonic()
-
-  
-    print('win rate', wins, 'loss rate', losses, 'draw rate', draws)
-    print('reward average', np.mean(rewards))
-    print(timedelta(seconds=end_time - start_time))
-
-
-    plt.plot(checkrewards)
+# Summary printouts of performance
+    segments = []
+    split = np.split(np.array(totalRewards), 100)
+    print("Progression of segmented average scores: ")
+    for sub in split:
+        print(np.mean(sub))
+        segments.append(np.mean(sub))
+    idx = int(numEpisodes / 10)
+    print("'Trained' (avg of last tenth) reward:", np.mean(totalRewards[-idx:]))
+    print("Average reward:", np.mean(totalRewards))
+    unique, counts = np.unique(np.array(totalRewards), return_counts=True) 
+    print(dict(zip(unique, counts)))
+    print("Total runtime: ", round(time.time() - start_time, 2), " seconds")
+    np.save("dq_last_rewards", totalRewards)
+    plt.plot(segments)
     plt.show()
-
